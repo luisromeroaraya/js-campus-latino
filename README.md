@@ -10,7 +10,6 @@ Built as a lightweight, Bootstrap-free single-page app that pulls episodes from 
 - **Custom CSS** (no Bootstrap, no Tailwind — full control)
 - **Bootstrap Icons** (icon font only, not the CSS framework)
 - **Mixcloud API** (episode search + embed player)
-- **Botpoison** (contact form anti-spam)
 - **localStorage** (dark mode preference)
 
 ## Features
@@ -21,6 +20,7 @@ Built as a lightweight, Bootstrap-free single-page app that pulls episodes from 
 - Episode search by title text and year filter
 - Share-to-clipboard with toast notification
 - Dark mode toggle (persisted in localStorage)
+- Contact info with phone and email
 - Horizontal episode cards with description excerpts
 - Scroll-triggered fade-in for episode list
 - Full-screen editorial hero with CSS geometric pattern background
@@ -48,7 +48,7 @@ No build step, no npm install — just serve the directory.
 
 ```
 ├── index.html          # All page sections + player sheet + live bar
-├── css/style.css       # Complete stylesheet (~1460 lines)
+├── css/style.css       # Complete stylesheet (~1270 lines)
 ├── js/app.js           # All logic: state, API, rendering, events
 └── assets/             # Logo images, favicon
 ```
@@ -56,12 +56,15 @@ No build step, no npm install — just serve the directory.
 ## API Notes
 
 - Mixcloud search returns ALL Radio Campus shows; client-side filtering via `element.key.indexOf('/radiocampusbruxelles/campus-latino-') !== -1`
-- Body has `padding-bottom: calc(var(--bar-h) * 2)` to account for the fixed player sheet + live bar
+- Non-home pages have `padding-bottom: calc(var(--bar-h) * 2)` to keep content visible above the player sheet and live bar
 
 ## External Dependencies
 
 | Library | Purpose |
 |---------|---------|
 | [Bootstrap Icons](https://icons.getbootstrap.com/) | Icon font (free) |
-| [Botpoison](https://botpoison.com/) | Contact form spam protection |
 | [Google Fonts](https://fonts.google.com/) | Playfair Display + Ubuntu |
+
+## Built with
+
+This project was built with [opencode](https://opencode.ai), an AI coding assistant that runs entirely in the terminal.

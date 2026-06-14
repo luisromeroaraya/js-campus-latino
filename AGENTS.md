@@ -30,15 +30,16 @@ node --check js/app.js
 
 ## Key Design Decisions
 
+- Home page shows only full-screen hero and live bar — no latest episode section
 - Player sheet is a fixed bottom panel above the live bar; stays visible across page navigations
-- Body has `padding-bottom: calc(var(--bar-h) * 2)` to account for player sheet + live bar
+- Non-home pages have `padding-bottom: calc(var(--bar-h) * 2)` to account for player sheet + live bar (home page has none — hero fills viewport)
 - `position: sticky` nav needs to work with hash-based routing (no page reload)
 - Episode cards use `IntersectionObserver` for scroll-triggered fade-in
 - Dark mode via `data-theme` attribute on `<html>`, all colors as CSS variables
 
 ## CSS Conventions
 
-- BEM-ish naming: `.btn--light`, `.card-btn--bm`
+- BEM-ish naming: `.btn--light`, `.card-btn--share`
 - Section comments use `/* ===== Section ===== */`
 - Mobile-first: base styles are mobile, `@media (min-width: ...)` for larger
 
@@ -54,7 +55,7 @@ node --check js/app.js
 
 - Filter by year works via regex on episode name (names contain dates)
 - Search and year filter are mutually exclusive (typing clears year, selecting year clears search)
-- Bookmark/share buttons use event delegation via `e.target.closest()`
+- Share/retry buttons use event delegation via `e.target.closest()`
 - Episode descriptions from Mixcloud are HTML; stripped to text via DOM parser
 
 ## External Dependencies
