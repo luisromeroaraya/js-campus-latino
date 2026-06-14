@@ -7,9 +7,13 @@
     filterText: "",
     isLoading: false,
     hasError: false,
+    currentSlug: null,
   };
 
   /* ===== API ===== */
+  /* Mixcloud search returns ALL Radio Campus shows. We paginate through
+     all results and keep only episodes whose key contains "campus-latino-".
+     Results are sorted descending by name (which contains the date). */
   function getEpisodes(url, episodes) {
     return fetch(url)
       .then(function (res) {
@@ -74,7 +78,66 @@
     return div.innerHTML;
   }
 
-  /* ===== Render: Skeleton for Episodes ===== */
+  /* ===== Dark Mode ===== */
+  function setupDarkMode() {
+    var btn = document.getElementById("dark-toggle");
+    var icon = btn.querySelector("i");
+    if (localStorage.getItem("cl-theme") === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      icon.className = "bi bi-sun";
+    }
+    btn.addEventListener("click", function () {
+      var isDark = document.documentElement.hasAttribute("data-theme");
+      if (isDark) {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.setItem("cl-theme", "light");
+        icon.className = "bi bi-moon-stars";
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("cl-theme", "dark");
+        icon.className = "bi bi-sun";
+      }
+    });
+  }
+
+  /* ===== Toast ===== */
+  function showToast(msg) {
+    var el = document.getElementById("toast-msg");
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(el._timer);
+    el._timer = setTimeout(function () {
+      el.classList.remove("show");
+    }, 2000);
+  }
+
+  /* ===== Description extract ===== */
+  function extractDescription(html) {
+    if (!html) return "";
+    var div = document.createElement("div");
+    div.innerHTML = html;
+    var text = div.textContent || div.innerText || "";
+    text = text.replace(/\s+/g, " ").trim();
+    if (text.length > 120) {
+      text = text.substring(0, 117) + "...";
+    }
+    return text;
+  }
+
+  /* ===== Share ===== */
+  function shareEpisode(slug) {
+    var url = "https://www.mixcloud.com/radiocampusbruxelles/" + slug + "/";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function () {
+        showToast("Enlace copiado al portapapeles");
+      });
+    } else {
+      showToast(url);
+    }
+  }
+
+  /* ===== Render: Skeleton ===== */
   function renderSkeletons(count) {
     count = count || 6;
     var html = "";
@@ -92,58 +155,94 @@
     return html;
   }
 
-  /* ===== Render: Error State ===== */
-  function renderError(message, retryFn) {
+  /* ===== Scroll fade-in ===== */
+  function observeFadeIn() {
+    var els = document.querySelectorAll(".fade-in");
+    if (!els.length || !window.IntersectionObserver) {
+      els.forEach(function (el) { el.classList.add("visible"); });
+      return;
+    }
+    var obs = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    els.forEach(function (el) { obs.observe(el); });
+  }
+
+  /* ===== Render: Error ===== */
+  function renderError(message) {
     return (
       '<div class="error-state">' +
       '<i class="bi bi-exclamation-circle"></i>' +
       "<p>" +
       escapeHtml(message) +
       "</p>" +
-      (retryFn
-        ? '<button class="btn btn-outline-primary btn-sm retry-btn">Reintentar</button>'
-        : "") +
+      '<button class="error-btn">Reintentar</button>' +
       "</div>"
     );
   }
 
   /* ===== Render: Episodes ===== */
+  /* Filters state.episodes by search text / year,
+     then builds horizontal card HTML and triggers scroll fade-in. */
   function renderEpisodes() {
     var container = document.getElementById("episode-list");
     if (!container) return;
 
+    var filtered = state.episodes;
     var filter = new RegExp(state.filterText, "i");
-    var filtered = state.episodes.filter(function (el) {
+    filtered = filtered.filter(function (el) {
       return el.name.match(filter);
     });
-
     if (filtered.length === 0) {
       container.innerHTML =
-        '<div class="error-state" style="grid-column:1/-1">' +
-        "<p>No se encontraron episodios.</p>" +
-        "</div>";
+        '<div class="error-state"><p>No se encontraron episodios.</p></div>';
       return;
     }
 
-    container.innerHTML = filtered
+    var html = filtered
       .map(function (ep) {
+        var isPlaying = ep.slug === state.currentSlug;
+        var desc = extractDescription(ep.description);
         return (
-          '<a href="#/player/' +
+          '<div class="episode-card-link' +
+          (isPlaying ? " playing" : "") +
+          '" data-slug="' +
           escapeHtml(ep.slug) +
-          '" class="episode-card-link">' +
-          '<article class="episode-card">' +
-          '<div class="episode-card-img">' +
+          '">' +
+          '<article class="episode-card fade-in">' +
+          '<div class="episode-img">' +
           '<img src="' +
           escapeHtml(ep.pictures.large) +
           '" alt="' +
           escapeHtml(ep.name) +
           '" loading="lazy">' +
+          (isPlaying
+            ? '<span class="now-playing">Reproduciendo</span>'
+            : "") +
+          '<button class="play-overlay" aria-label="Reproducir">' +
+          '<i class="bi bi-play-fill"></i>' +
+          "</button>" +
           "</div>" +
-          '<div class="episode-card-body">' +
+          '<div class="episode-body">' +
           "<h5>" +
           escapeHtml(ep.name) +
           "</h5>" +
-          '<div class="episode-card-meta">' +
+          (desc
+            ? '<p class="episode-desc">' + escapeHtml(desc) + "</p>"
+            : "") +
+          '<div class="episode-meta">' +
+          "<span>" +
+          '<i class="bi bi-calendar3"></i> ' +
+          formatDate(ep.updated_time) +
+          "</span>" +
           "<span>" +
           '<i class="bi bi-play-fill"></i> ' +
           (ep.play_count || 0) +
@@ -153,64 +252,79 @@
           formatDuration(ep.audio_length) +
           "</span>" +
           "</div>" +
-          '<div class="episode-card-date">' +
-          '<i class="bi bi-calendar3"></i> ' +
-          formatDate(ep.updated_time) +
+          '<div class="episode-actions">' +
+          '<button class="card-btn--share" data-slug="' +
+          escapeHtml(ep.slug) +
+          '" aria-label="Compartir">' +
+          '<i class="bi bi-share"></i> Compartir' +
+          "</button>" +
           "</div>" +
           "</div>" +
           "</article>" +
-          "</a>"
+          "</div>"
         );
       })
       .join("");
+    container.innerHTML = html;
+    observeFadeIn();
   }
 
-  /* ===== Render: Player ===== */
-  function renderPlayer(data) {
-    var container = document.getElementById("player-content");
-    if (!container) return;
+  /* ===== Player Sheet ===== */
+  /* Slides up the player sheet, finds episode data from state,
+     sets thumbnail/title, embeds Mixcloud iframe for playback.
+     The sheet stays visible across page navigations. */
+  function openPlayer(slug) {
+    var sheet = document.getElementById("player-sheet");
+    var embed = document.getElementById("sheet-embed");
+    var thumb = document.getElementById("sheet-thumb");
+    var title = document.getElementById("sheet-title");
 
-    container.innerHTML =
-      '<div class="player-hero">' +
-      '<img src="' +
-      (data.pictures ? escapeHtml(data.pictures.large) : "") +
-      '" alt="' +
-      escapeHtml(data.name) +
-      '" class="player-hero-img">' +
-      "<h3>" +
-      escapeHtml(data.name) +
-      "</h3>" +
-      "</div>" +
-      '<div class="player-embed">' +
+    var ep = null;
+    for (var i = 0; i < state.episodes.length; i++) {
+      if (state.episodes[i].slug === slug) {
+        ep = state.episodes[i];
+        break;
+      }
+    }
+
+    if (ep) {
+      thumb.src = ep.pictures.large;
+      thumb.alt = ep.name;
+      title.textContent = ep.name;
+    } else {
+      thumb.src = "";
+      thumb.alt = "";
+      title.textContent = "Cargando...";
+    }
+
+    embed.innerHTML =
       '<iframe src="https://www.mixcloud.com/widget/iframe/?feed=https://www.mixcloud.com/radiocampusbruxelles/' +
-      escapeHtml(data.slug) +
-      '/&hide_cover=1" style="border:0;width:100%;height:120px" allowfullscreen scrolling="no" allow="encrypted-media"></iframe>' +
-      "</div>" +
-      '<div class="player-info">' +
-      '<div class="player-meta">' +
-      '<div class="player-meta-item">' +
-      '<i class="bi bi-play-fill"></i> Reproducciones: ' +
-      (data.play_count || 0) +
-      "</div>" +
-      '<div class="player-meta-item">' +
-      '<i class="bi bi-clock"></i> Duraci&oacute;n: ' +
-      formatDuration(data.audio_length) +
-      "</div>" +
-      '<div class="player-meta-item">' +
-      '<i class="bi bi-calendar3"></i> ' +
-      formatDate(data.updated_time) +
-      "</div>" +
-      "</div>" +
-      (data.description
-        ? "<p>" + escapeHtml(data.description) + "</p>"
-        : "") +
-      "</div>" +
-      '<div class="player-back">' +
-      '<a href="#/episodes"><i class="bi bi-arrow-left"></i> Volver a episodios</a>' +
-      "</div>";
+      slug +
+      '/&hide_cover=1" allowfullscreen scrolling="no" allow="encrypted-media"></iframe>';
+
+    state.currentSlug = slug;
+    sheet.classList.add("open");
+    renderEpisodes();
+  }
+
+  /* Slides the sheet back down, clears the iframe (stops playback),
+     resets state, and re-renders to remove the "now playing" indicator. */
+  function closePlayer() {
+    var sheet = document.getElementById("player-sheet");
+    var embed = document.getElementById("sheet-embed");
+    sheet.classList.remove("open");
+    embed.innerHTML = "";
+    state.currentSlug = null;
+    renderEpisodes();
+  }
+
+  function setupPlayerSheet() {
+    document.getElementById("sheet-close").addEventListener("click", closePlayer);
   }
 
   /* ===== Page loaders ===== */
+  /* Called when navigating to #/episodes. Shows skeletons on first load,
+     fetches data via API, or shows cached data / error state. */
   function loadEpisodes() {
     var container = document.getElementById("episode-list");
     if (!container) return;
@@ -235,64 +349,44 @@
           state.isLoading = false;
           state.hasError = true;
           container.innerHTML = renderError(
-            "No pudimos cargar los episodios. Verifica tu conexi&oacute;n.",
-            function () {
-              state.hasError = false;
-              loadEpisodes();
-            }
+            "No pudimos cargar los episodios. Verifica tu conexi&oacute;n."
           );
-          attachRetry(container);
         });
     } else if (state.hasError) {
       container.innerHTML = renderError(
-        "No pudimos cargar los episodios. Verifica tu conexi&oacute;n.",
-        function () {
-          state.hasError = false;
-          loadEpisodes();
-        }
+        "No pudimos cargar los episodios. Verifica tu conexi&oacute;n."
       );
-      attachRetry(container);
     } else {
       renderEpisodes();
     }
   }
 
-  function attachRetry(container) {
-    var btn = container.querySelector(".retry-btn");
-    if (btn) {
-      btn.addEventListener("click", function () {
-        state.hasError = false;
-        loadEpisodes();
-      });
-    }
+  /* ===== Mobile Nav ===== */
+  function closeMobileNav() {
+    var menu = document.getElementById("nav-menu");
+    var toggle = document.getElementById("nav-toggle");
+    if (menu) menu.classList.remove("open");
+    if (toggle) toggle.classList.remove("open");
   }
 
-  function loadPlayer(slug) {
-    var container = document.getElementById("player-content");
-    if (!container) return;
-
-    container.innerHTML =
-      '<div class="text-center py-5">' +
-      '<div class="spinner-border text-primary" role="status">' +
-      '<span class="visually-hidden">Cargando...</span>' +
-      "</div>" +
-      "</div>";
-
-    fetchData(slug)
-      .then(function (data) {
-        renderPlayer(data);
-      })
-      .catch(function () {
-        container.innerHTML =
-          '<div class="error-state">' +
-          '<i class="bi bi-exclamation-circle"></i>' +
-          "<p>No se pudo cargar este episodio.</p>" +
-          '<a href="#/episodes" class="btn btn-outline-primary btn-sm">Volver a episodios</a>' +
-          "</div>";
+  function setupMobileNav() {
+    var toggle = document.getElementById("nav-toggle");
+    var menu = document.getElementById("nav-menu");
+    if (!toggle || !menu) return;
+    toggle.addEventListener("click", function () {
+      menu.classList.toggle("open");
+      toggle.classList.toggle("open");
+    });
+    menu.querySelectorAll(".nav-link").forEach(function (link) {
+      link.addEventListener("click", function () {
+        closeMobileNav();
       });
+    });
   }
 
   /* ===== Router ===== */
+  /* Hash-based SPA routing. Switches the visible page, updates the nav
+     active state, pushes to history, and triggers data loading. */
   function navigate(page, params) {
     var prevPage = document.querySelector(".page.visible");
     if (prevPage) {
@@ -304,12 +398,7 @@
       target.classList.add("visible");
     }
 
-    // collapse mobile nav
-    var navCollapse = document.getElementById("navbarCollapse");
-    if (navCollapse && navCollapse.classList.contains("show")) {
-      var toggler = document.querySelector(".navbar-toggler");
-      if (toggler) toggler.click();
-    }
+    closeMobileNav();
 
     document.querySelectorAll(".nav-link[data-page]").forEach(function (el) {
       el.classList.remove("active");
@@ -320,19 +409,16 @@
     if (navLink) navLink.classList.add("active");
 
     var hash = page === "home" ? "" : "/" + page;
-    if (page === "player" && params && params.slug) {
-      hash = "/player/" + params.slug;
-    }
     history.pushState({ page: page, params: params }, "", "#" + hash);
 
     if (page === "episodes") {
       loadEpisodes();
-    } else if (page === "player" && params && params.slug) {
-      loadPlayer(params.slug);
     }
   }
 
   /* ===== Hash parsing ===== */
+  /* Reads window.location.hash and routes to the matching page.
+     Called on initial load and on popstate (back/forward). */
   function parseHash() {
     var hash = window.location.hash.replace("#", "");
     if (!hash || hash === "/") {
@@ -341,16 +427,14 @@
     }
     var parts = hash.split("/").filter(Boolean);
     var page = parts[0];
-    if (page === "player" && parts[1]) {
-      navigate("player", { slug: parts[1] });
-    } else if (["about", "episodes", "contact"].indexOf(page) !== -1) {
+    if (["about", "episodes", "contact", "home"].indexOf(page) !== -1) {
       navigate(page);
     } else {
       navigate("home");
     }
   }
 
-  /* ===== Nav click handling ===== */
+  /* ===== Event: Nav ===== */
   function setupNav() {
     document.querySelectorAll(".nav-link[data-page]").forEach(function (el) {
       el.addEventListener("click", function (e) {
@@ -360,7 +444,7 @@
     });
   }
 
-  /* ===== Filter ===== */
+  /* ===== Event: Filter ===== */
   function setupFilter() {
     var searchInput = document.getElementById("filter-search");
     var yearSelect = document.getElementById("filter-year");
@@ -381,7 +465,36 @@
     }
   }
 
-  /* ===== Live Bar ===== */
+  /* ===== Event: Episode clicks ===== */
+  function setupEpisodeClicks() {
+    var grid = document.getElementById("episode-list");
+    if (!grid) return;
+
+    grid.addEventListener("click", function (e) {
+      var shareBtn = e.target.closest(".card-btn--share");
+      var retryBtn = e.target.closest(".error-btn");
+      var card = e.target.closest(".episode-card-link");
+
+      if (shareBtn) {
+        e.preventDefault();
+        shareEpisode(shareBtn.dataset.slug);
+        return;
+      }
+      if (retryBtn) {
+        e.preventDefault();
+        location.reload();
+        return;
+      }
+      if (card) {
+        e.preventDefault();
+        openPlayer(card.dataset.slug);
+      }
+    });
+  }
+
+
+
+  /* ===== Event: Live Bar ===== */
   function setupLiveBar() {
     var btn = document.getElementById("live-toggle");
     var audio = document.getElementById("live-audio");
@@ -389,9 +502,7 @@
 
     function togglePlay() {
       if (audio.paused) {
-        audio.play().catch(function () {
-          // autoplay may be blocked
-        });
+        audio.play().catch(function () {});
         btn.innerHTML = '<i class="bi bi-pause-fill"></i>';
         btn.classList.add("playing");
       } else {
@@ -415,7 +526,7 @@
     }
   }
 
-  /* ===== Scroll-to-top ===== */
+  /* ===== Event: Scroll-to-top ===== */
   function setupScrollTop() {
     var btn = document.getElementById("scroll-top");
     if (!btn) return;
@@ -439,11 +550,17 @@
   });
 
   /* ===== Init ===== */
+  /* Sets up all event handlers and triggers the initial route.
+     Order matters: nav and filter must be ready before parseHash. */
   document.addEventListener("DOMContentLoaded", function () {
     setupNav();
+    setupMobileNav();
     setupFilter();
+    setupEpisodeClicks();
+    setupPlayerSheet();
     setupLiveBar();
     setupScrollTop();
+    setupDarkMode();
     parseHash();
   });
 })();

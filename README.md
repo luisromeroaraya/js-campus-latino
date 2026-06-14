@@ -1,25 +1,67 @@
-# [Campus Latino podcast website](http://www.campuslatino.ml)
-I'll create a podcast website using [Vue.js](https://vuejs.org/) and the [Mixcloud API](https://www.mixcloud.com/developers/).
+# Campus Latino 92.1 FM — Podcast Website
 
-<p align="center"><a href="https://vuejs.org" target="_blank"><img height="200" src="https://www.dotcom-monitor.com/blog/wp-content/uploads/sites/3/2020/05/Vue-logo-1.png" alt="Vue logo"></a><a href="https://www.mixcloud.com" target="_blank"><img height="200" src="https://www.mixcloud.com/media/client/www/c17517f7dc1e755c2d0b.jpg" alt="Mixcloud logo"></a></p>
+[Radio Campus Brussels](https://www.radiocampus.be) — Latin American community radio show airing Sundays 11:00–14:30 on 92.1 FM.
 
-## About Campus Latino
-<img width="250" src="https://i1.sndcdn.com/avatars-000035004735-ai31p0-t500x500.jpg" alt="Campus Latino">
+Built as a lightweight, Bootstrap-free single-page app that pulls episodes from Mixcloud and filters only Campus Latino content.
 
-The podcast is actually a latin american radio program called [Campus Latino](https://www.radiocampus.be/les-communautaires/campus-latino/) which is part of the [Radio Campus Bruxelles 92.1 FM](https://www.radiocampus.be) broadcast schedule. You can listen to the show every Sunday between 11:00 and 14:30.
-  
-<img width="500" src="https://static.pointculture.be/media/images/Radio_Campus_Bruxelles_studi.2e16d0ba.fill-1000x500-c100.jpg" alt="Radio Campus">
+## Tech Stack
 
-## Campus Latino in the Mixcloud platform
+- **Vanilla JavaScript** (no framework — no Vue, no React, no jQuery)
+- **Custom CSS** (no Bootstrap, no Tailwind — full control)
+- **Bootstrap Icons** (icon font only, not the CSS framework)
+- **Mixcloud API** (episode search + embed player)
+- **Botpoison** (contact form anti-spam)
+- **localStorage** (dark mode preference)
 
-Episodes are uploaded weekly to the Mixcloud platform under the [Radio Campus account](https://www.mixcloud.com/radiocampusbruxelles/).
+## Features
 
-## Objective
+- Hash-based SPA routing: `#/` (home), `#/about`, `#/episodes`, `#/contact`
+- Persistent player sheet: slides up from the bottom, keeps playing across page navigations
+- Live radio stream bar with play/pause
+- Episode search by title text and year filter
+- Share-to-clipboard with toast notification
+- Dark mode toggle (persisted in localStorage)
+- Horizontal episode cards with description excerpts
+- Scroll-triggered fade-in for episode list
+- Full-screen editorial hero with CSS geometric pattern background
+- Page transition animations
+- Skeleton loading state
+- Error state with retry button
 
-Since Radio Campus hosts plenty of shows in their mixcloud account our shows are somehow lost in the sea. The goal of this project is to make an independent website where people can browse only between Campus Latino uploaded episodes.
+## Design
 
-## Current status
+- Typography: Playfair Display (headings) + Ubuntu (body)
+- Color palette: warm off-white background, deep red accent, amber highlights
+- Mobile-first responsive layout
+- Magazine/editorial style with horizontal card layout
 
-The site is currently working and deployed [here.](http://www.campuslatino.ml)
+## Getting Started
 
-<img align="center" width="100%" src="https://worlddomination.be/static/img/src/radiocampus.jpg" alt="Radio Campus Banner">
+```bash
+python3 -m http.server 8080
+# Open http://localhost:8080
+```
+
+No build step, no npm install — just serve the directory.
+
+## File Structure
+
+```
+├── index.html          # All page sections + player sheet + live bar
+├── css/style.css       # Complete stylesheet (~1460 lines)
+├── js/app.js           # All logic: state, API, rendering, events
+└── assets/             # Logo images, favicon
+```
+
+## API Notes
+
+- Mixcloud search returns ALL Radio Campus shows; client-side filtering via `element.key.indexOf('/radiocampusbruxelles/campus-latino-') !== -1`
+- Body has `padding-bottom: calc(var(--bar-h) * 2)` to account for the fixed player sheet + live bar
+
+## External Dependencies
+
+| Library | Purpose |
+|---------|---------|
+| [Bootstrap Icons](https://icons.getbootstrap.com/) | Icon font (free) |
+| [Botpoison](https://botpoison.com/) | Contact form spam protection |
+| [Google Fonts](https://fonts.google.com/) | Playfair Display + Ubuntu |

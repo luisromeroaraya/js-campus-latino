@@ -5,208 +5,217 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="favicon.ico">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <title>Campus Latino 92.1 FM</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="app">
 
-    <!-- ===== NAVBAR ===== -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <div class="container">
-        <a href="#/" class="navbar-brand">
-          <img alt="Campus Latino logo" src="assets/logo-transparent.png">
-          <span class="d-none d-sm-inline">Campus Latino 92.1 FM</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="site-nav">
+    <div class="wrapper nav-inner">
+      <a href="#/" class="nav-brand">
+        <img src="assets/logo-transparent.png" alt="Campus Latino">
+        <span class="brand-text">Campus Latino 92.1 FM</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#/" class="nav-link" data-page="home">Inicio</a></li>
+        <li><a href="#/about" class="nav-link" data-page="about">Sobre nosotros</a></li>
+        <li><a href="#/episodes" class="nav-link" data-page="episodes">Episodios</a></li>
+        <li><a href="#/contact" class="nav-link" data-page="contact">Contacto</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!--
+    PAGE SYSTEM: Each page is a <section> with class "page".
+    JS shows/hides pages via #page-{name} IDs (hash-based routing).
+    Only the active page gets class "visible".
+  -->
+
+  <!-- ===== HOME ===== -->
+  <section id="page-home" class="page">
+    <div class="hero">
+      <div class="hero-content">
+        <img src="assets/logo.png" alt="Campus Latino" class="hero-logo">
+        <p class="hero-tagline">La radio de la comunidad latinoamericana en Bruselas</p>
+        <div class="hero-actions">
+          <a href="#/episodes" class="btn btn--light">Explorar episodios</a>
+          <button id="hero-live-btn" class="btn btn--outline-light">Escuchar en vivo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="page-about" class="page">
+    <div class="wrapper py-5">
+      <div class="about-split">
+        <div class="about-main">
+          <h2 class="section-title">Sobre nosotros</h2>
+          <div class="about-schedule">
+            <strong>Campus Latino — Todos los domingos de 11:00 a.m. a 2:30 p.m.</strong>
+          </div>
+          <div class="about-body">
+            <p class="about-lead">
+              Campus Latino es el programa latinoamericano de Radio Campus creado en
+              1980 en el contexto de programas dirigidos a comunidades extranjeras en
+              Bruselas.
+            </p>
+            <p>
+              Emitiendo en el 92.1 de la banda FM, Radio Campus es la Radio
+              Comunitaria de la Universidad Libre de Bruselas. El objetivo principal es
+              dirigirse al público no latinoamericano con el mismo entusiasmo que la
+              comunidad latinoamericana.
+            </p>
+            <p>
+              Campus Latino es una organización que promueve la difusión de música,
+              información y busca dar a conocer a los Pueblos de América.
+            </p>
+            <p>
+              Es decir, que el espectáculo no se detiene solo en el folclore o la
+              variedad del mundo latinoamericano. Participa en la difusión de elementos
+              que ayuden a expresar las identidades latinoamericanas en solidaridad con
+              la lucha de todos los pueblos del mundo por evitar los estereotipos.
+            </p>
+            <p><strong>Campus Latino debe defender:</strong></p>
+            <ul class="value-list">
+              <li>El derecho a la vida</li>
+              <li>El derecho a una cultura indígena</li>
+              <li>El derecho a acceder a los recursos naturales</li>
+              <li>Respeto por las minorías</li>
+              <li>Reconocimiento y acceso a los derechos políticos, económicos, sociales, culturales y religiosos</li>
+              <li>Valores universales y derechos humanos</li>
+            </ul>
+            <p>
+              Campus Latino está al servicio de todos aquellos que quieran denunciar
+              cualquier infracción o acto contrario a los derechos universales y
+              mantendrá en todo caso su independencia de cualquier partido político,
+              corriente ideológica o religiosa y se regirá por los principios de
+              libertad e igualdad social...
+            </p>
+          </div>
+        </div>
+        <aside class="about-sidebar">
+          <div class="sidebar-card">
+            <h4>Horario</h4>
+            <p><strong>Domingos</strong><br>11:00 a.m. – 2:30 p.m.</p>
+          </div>
+          <div class="sidebar-card">
+            <h4>Frecuencia</h4>
+            <p><strong>92.1 FM</strong><br>Radio Campus Brussels</p>
+          </div>
+          <div class="sidebar-card">
+            <h4>Contacto</h4>
+            <p><a href="#/contact">Envíanos un mensaje</a></p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EPISODES ===== -->
+  <section id="page-episodes" class="page">
+    <div class="wrapper py-5">
+      <h2 class="section-title">Episodios</h2>
+      <div class="filter-bar">
+        <input id="filter-search" type="text" placeholder="Buscar episodios...">
+        <select id="filter-year">
+          <option value="">Todos los años</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+          <option value="2017">2017</option>
+        </select>
+      </div>
+      <div id="episode-list" class="episode-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="page-contact" class="page">
+    <div class="wrapper py-5">
+      <h2 class="section-title">Contacto</h2>
+      <div class="contact-card">
+        <p class="contact-message">
+          Puedes contactarnos por teléfono o correo electrónico:
+        </p>
+        <div class="contact-links">
+          <a href="tel:+3226408717" class="contact-item">
+            <i class="bi bi-telephone"></i> 02 640 87 17
+          </a>
+          <a href="mailto:rcampus@ulb.ac.be" class="contact-item">
+            <i class="bi bi-envelope"></i> rcampus@ulb.ac.be
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    PLAYER SHEET: Fixed bottom panel that slides up above the live bar.
+    Slides up via .open class (transform: translateY(0)).
+    Stays visible across page navigations — playback is persistent.
+    Cleared when closed (embed.innerHTML = "") to stop Mixcloud iframe.
+  -->
+  <div id="player-sheet" class="player-sheet">
+    <div class="sheet-inner">
+      <div class="sheet-top">
+        <img id="sheet-thumb" class="sheet-thumb" src="" alt="">
+        <span id="sheet-title" class="sheet-title"></span>
+        <button id="sheet-close" class="sheet-close" aria-label="Cerrar reproductor">
+          <i class="bi bi-x-lg"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a href="#/" class="nav-link" data-page="home">Inicio</a>
-            </li>
-            <li class="nav-item">
-              <a href="#/about" class="nav-link" data-page="about">Sobre nosotros</a>
-            </li>
-            <li class="nav-item">
-              <a href="#/episodes" class="nav-link" data-page="episodes">Episodios</a>
-            </li>
-            <li class="nav-item">
-              <a href="#/contact" class="nav-link" data-page="contact">Contacto</a>
-            </li>
-          </ul>
-        </div>
       </div>
-    </nav>
-
-    <!-- ===== HOME ===== -->
-    <section id="page-home" class="page" >
-      <div class="home-hero">
-        <div class="home-hero-content">
-          <img alt="Campus Latino logo" src="assets/logo.png" class="home-logo">
-          <p class="home-tagline">La radio de la comunidad latinoamericana en Bruselas</p>
-          <div class="home-actions">
-            <a href="#/episodes" class="btn btn-light btn-lg">Explorar episodios</a>
-            <button id="hero-live-btn" class="btn btn-outline-light btn-lg">Escuchar en vivo</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== ABOUT ===== -->
-    <section id="page-about" class="page" >
-      <div class="container py-5">
-        <h2 class="page-title">Sobre nosotros</h2>
-        <div class="about-schedule">
-          <strong>Campus Latino — Todos los domingos de 11:00 a.m. a 2:30 p.m.</strong>
-        </div>
-        <div style="max-width: 720px; margin: 0 auto">
-          <p class="about-lead">
-            Campus Latino es el programa latinoamericano de Radio Campus creado en
-            1980 en el contexto de programas dirigidos a comunidades extranjeras en
-            Bruselas.
-          </p>
-          <p>
-            Emitiendo en el 92.1 de la banda FM, Radio Campus es la Radio
-            Comunitaria de la Universidad Libre de Bruselas. El objetivo principal es
-            dirigirse al p&uacute;blico no latinoamericano con el mismo entusiasmo que la
-            comunidad latinoamericana.
-          </p>
-          <p>
-            Campus Latino es una organizaci&oacute;n que promueve la difusi&oacute;n de m&uacute;sica,
-            informaci&oacute;n y busca dar a conocer a los Pueblos de Am&eacute;rica.
-          </p>
-          <p>
-            Es decir, que el espect&aacute;culo no se detiene solo en el folclore o la
-            variedad del mundo latinoamericano. Participa en la difusi&oacute;n de elementos
-            que ayuden a expresar las identidades latinoamericanas en solidaridad con
-            la lucha de todos los pueblos del mundo por evitar los estereotipos.
-          </p>
-          <p><strong>Campus Latino debe defender:</strong></p>
-          <ul class="about-values">
-            <li>El derecho a la vida</li>
-            <li>El derecho a una cultura ind&iacute;gena</li>
-            <li>El derecho a acceder a los recursos naturales</li>
-            <li>Respeto por las minor&iacute;as</li>
-            <li>Reconocimiento y acceso a los derechos pol&iacute;ticos, econ&oacute;micos, sociales, culturales y religiosos</li>
-            <li>Valores universales y derechos humanos</li>
-          </ul>
-          <p>
-            Campus Latino est&aacute; al servicio de todos aquellos que quieran denunciar
-            cualquier infracci&oacute;n o acto contrario a los derechos universales y
-            mantendr&aacute; en todo caso su independencia de cualquier partido pol&iacute;tico,
-            corriente ideol&oacute;gica o religiosa y se regir&aacute; por los principios de
-            libertad e igualdad social...
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== EPISODES ===== -->
-    <section id="page-episodes" class="page" >
-      <div class="container py-5">
-        <h2 class="page-title">Episodios</h2>
-        <div class="filter-bar">
-          <input id="filter-search" type="text" placeholder="Buscar episodios..." value="">
-          <select id="filter-year">
-            <option value="">Todos los a&ntilde;os</option>
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
-            <option value="2019">2019</option>
-            <option value="2018">2018</option>
-            <option value="2017">2017</option>
-          </select>
-        </div>
-        <div id="episode-list" class="episode-grid">
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== PLAYER ===== -->
-    <section id="page-player" class="page" >
-      <div class="container py-5">
-        <h2 class="page-title">Reproductor</h2>
-        <div id="player-content">
-          <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Cargando...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== CONTACT ===== -->
-    <section id="page-contact" class="page" >
-      <div class="container py-5">
-        <h2 class="page-title">Contacto</h2>
-        <div class="contact-card">
-          <form method="POST" action="https://submit-form.com/Fy3Hr5P9" data-botpoison-public-key="pk_6bc5391f-541a-456f-8ddc-02d475af848b" id="contact-form">
-            <div class="mb-3">
-              <input type="text" id="name" name="name" class="form-control" placeholder="Nombre">
-            </div>
-            <div class="mb-3">
-              <input type="email" id="email" name="email" class="form-control" placeholder="Correo electr&oacute;nico">
-            </div>
-            <div class="mb-3">
-              <input type="text" id="subject" name="subject" class="form-control" placeholder="Sujeto">
-            </div>
-            <div class="mb-3">
-              <textarea class="form-control" id="message" name="message" placeholder="D&eacute;janos tu mensaje..." rows="4"></textarea>
-            </div>
-            <input type="hidden" name="_redirect" value="http://www.campuslatino.ml/">
-            <input type="hidden" name="_append" value="false">
-            <button type="submit" class="btn btn-primary">Enviar</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="site-footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <img alt="Campus Latino" src="assets/logo-transparent.png">
-            <span>Campus Latino 92.1 FM</span>
-          </div>
-          <div class="footer-social">
-            <a href="https://www.facebook.com/CampusLatino" target="_blank" rel="noopener" aria-label="Facebook">
-              <i class="bi bi-facebook"></i>
-            </a>
-            <a href="https://www.mixcloud.com/radiocampusbruxelles/" target="_blank" rel="noopener" aria-label="Mixcloud">
-              <i class="bi bi-mic"></i>
-            </a>
-          </div>
-        </div>
-        <p class="footer-copy">Campus Latino &copy; 2021</p>
-      </div>
-    </footer>
-
+      <div id="sheet-embed" class="sheet-embed"></div>
+    </div>
   </div>
 
-  <!-- ===== LIVE BAR ===== -->
-  <div id="live-bar" class="live-bar">
-    <div class="live-bar-left">
-      <span class="live-dot"></span>
-      <span class="live-label">EN VIVO</span>
+  <!--
+    LIVE BAR: Fixed at the very bottom (z-index highest).
+    Has play/pause toggle for the streaming audio element.
+    The body padding-bottom accounts for both this bar
+    and the player sheet (calc(var(--bar-h) * 2)).
+  -->
+  <div class="live-bar">
+    <div class="live-main">
+      <div class="live-left">
+        <span class="live-dot"></span>
+        <span class="live-label">EN VIVO</span>
+        <span class="live-brand">Campus Latino 92.1 FM</span>
+      </div>
+      <div class="live-center">
+        <a href="https://www.facebook.com/CampusLatino" target="_blank" rel="noopener" class="live-social-link" aria-label="Facebook">
+          <i class="bi bi-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/radiocampuslatino/" target="_blank" rel="noopener" class="live-social-link" aria-label="Instagram">
+          <i class="bi bi-instagram"></i>
+        </a>
+        <a href="https://www.mixcloud.com/radiocampusbruxelles/" target="_blank" rel="noopener" class="live-social-link" aria-label="Mixcloud">
+          <i class="bi bi-mic"></i>
+        </a>
+        <button id="dark-toggle" class="live-dark" aria-label="Modo oscuro">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+      </div>
+      <div class="live-right">
+        <button id="live-toggle" class="live-btn" aria-label="Reproducir / Pausar">
+          <i class="bi bi-play-fill"></i>
+        </button>
+      </div>
     </div>
-    <div class="live-bar-center">
-      <span>Campus Latino 92.1 FM</span>
-    </div>
-    <div class="live-bar-right">
-      <button id="live-toggle" class="live-btn" aria-label="Reproducir / Pausar">
-        <i class="bi bi-play-fill"></i>
-      </button>
-    </div>
+    <p class="live-copy">Campus Latino &copy; 2021</p>
     <audio id="live-audio" preload="none">
       <source src="https://www.radiocampus.be/stream/stream_hi.ogg" type="audio/ogg">
       <source src="https://www.radiocampus.be/stream/stream_low.ogg" type="audio/ogg">
@@ -216,12 +225,15 @@
   </div>
 
   <!-- ===== SCROLL-TOP ===== -->
-  <button id="scroll-top" class="scroll-top-btn" aria-label="Volver arriba">
+  <button id="scroll-top" class="scroll-top" aria-label="Volver arriba">
     <i class="bi bi-arrow-up"></i>
   </button>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@botpoison/browser"></script>
+  <!-- ===== TOAST ===== -->
+  <div id="toast-msg" class="toast"></div>
+
+
+
   <script src="js/app.js"></script>
 </body>
 </html>
